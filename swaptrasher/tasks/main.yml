@@ -1,0 +1,16 @@
+---
+# tasks file for swaptrasher
+- block:
+    - name: disable the swap file
+      shell: swapoff -a
+
+    - name: replace swapfile fstab
+      lineinfile:
+        path: "/etc/fstab"
+        regexp: /swapfile
+        state: absent
+    
+    - name: delete swapfile
+      file:
+        state: absent
+        path: "{{ swap_trash }}"

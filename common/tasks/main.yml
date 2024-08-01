@@ -42,4 +42,11 @@
 
 - name: update apt cache
   apt:
-     update_cache: true
+    update_cache: true
+
+- name: install packages
+  apt: 
+    name: "{{ item }}"
+    state: present
+  loop:
+    - "{{ packages }}"

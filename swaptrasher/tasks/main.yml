@@ -3,14 +3,17 @@
 - block:
     - name: disable the swap file
       shell: swapoff -a
+      become: yes
 
     - name: replace swapfile fstab
       lineinfile:
         path: "/etc/fstab"
         regexp: /swapfile
         state: absent
+      become: yes
     
     - name: delete swapfile
       file:
         state: absent
         path: "{{ swap_trash }}"
+      besome: yes

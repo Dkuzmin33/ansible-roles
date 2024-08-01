@@ -4,12 +4,14 @@
 - name: set timezone to Europe/Moscow
   timezone:
     name: "{{ time_zone }}"
+  become: yes
 
 - block:
     - name: create a swap file
       shell: fallocate -l {{ swap_size }} {{ swap_file }}
       args:
         creates: "{{ swap_file }}"
+      become: yes
 
     - name: set the correct permissions
       file:
@@ -17,14 +19,17 @@
         owner: root
         group: root
         mode: '0600'
+      become: yes
 
     - name: make the file a swap file
       shell: mkswap {{ swap_file }}
       when: ansible_facts.swapfree_mb == 0
+      become: yes
 
     - name: enable the swap file
       shell: swapon {{ swap_file }}
       when: ansible_facts.swapfree_mb == 0
+      become: yes
 
     - name: add swap file to fstab
       mount:
@@ -35,7 +40,14 @@
         passno: 0
         dump: 0
         state: present
+      become: yes
 
 - name: set a hostname
   hostname:
     name: "{{ inventory_hostname }}"
+  become: yes
+
+- name: update apt cache
+  apt:
+     update_cache: true
+  become: yes

@@ -31,7 +31,27 @@
       name: python3-pip
       state: present
 
-  - name: install docker-compose 
-    apt: 
-      name: docker-compose
-      state: present
+- block: 
+
+  - name: chek if file docker-compose
+    stat:
+      path: /usr/local/bin/docker-compose
+    register: comp
+
+  - name: download docker-compose bin
+    shell: curl -SL https://github.com/docker/compose/releases/download/{{ compose_version }}/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+    when: comp.stat.isreg is undefined
+
+  - name: adding +x file docker-compose
+    file: dest=/usr/local/bin/docker-compose mode=a+x
+
+  - name: version 
+    shell: docker-compose --version
+    register: ver_com
+
+  - name: download docker-compose bin
+    shell: curl -SL https://github.com/docker/compose/releases/download/{{ compose_version }}/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+    when: ver_com.stdout.find('Docker Compose version {{ compose_version }}') != 0
+    
+
+
